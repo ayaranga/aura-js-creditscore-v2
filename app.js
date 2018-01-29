@@ -29,6 +29,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.post('/api/creditscore', creditscore.score);
+app.post('/api/creditscore/create', creditscore.create);
 app.get('/api/creditscore', creditscore.list);
 
 http.createServer(app).listen(app.get('port'), function(){
