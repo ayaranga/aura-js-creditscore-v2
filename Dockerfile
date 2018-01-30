@@ -34,4 +34,4 @@ RUN cd /tmp && npm install
 RUN mkdir /nodeapp && cp -a /tmp/node_modules /nodeapp
 ADD . /nodeapp
 EXPOSE 3000
-CMD    [ "node", "/nodeapp/app.js" ]
+ENTRYPOINT  [ "/bin/sh", "-c" , "echo 129.146.73.156  em12c.sainath.com >> /etc/hosts && node /nodeapp/app.js" ]

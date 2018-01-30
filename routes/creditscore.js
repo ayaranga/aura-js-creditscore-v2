@@ -4,30 +4,23 @@
  * run a simple query and return a response message.
  *
  */
-var resultData = {};
+console.log("Access the env variable in nodejs. Value of : process.env" + process.env);
+var connectstring = process.env.DB_CONNECT_STRING;
+console.log("Access the env variable in nodejs. Value of : DB connect string is " + connectstring);
+var adminuser = process.env.DB_USER;
+console.log("Access the env variable in nodejs. Value of : DB adminuser is " + adminuser);
+var adminpassword = process.env.DB_PASSWORD;
+console.log("Access the env variable in nodejs. Value of : DB adminpassword is " + adminpassword);
 exports.list = function(req, res) {
     console.log("Entering list all scores function V2");
     console.log(req.body);
-
+    res.setHeader('Content-Type', 'application/json');
     // Start of db code block
-    console.log("Access the env variable in nodejs. Value of : process.env" + process.env);
-    // var DB_INFO = process.env.DB_INFO;
-    // console.log("Access the env variable in nodejs. Value of : process.env.DB_INFO is " + DB_INFO);
-
-    // var DB_INFO_JSON = JSON.parse(DB_INFO);
-    // console.log("Access the env variable in nodejs. Value of : DB_INFO_JSON is " + DB_INFO_JSON);
-    // var host = DB_INFO_JSON.host;
-    // console.log("Access the env variable in nodejs. Value of : DB host is " + host);
-    // var adminuser = DB_INFO_JSON.adminuser;
-    // console.log("Access the env variable in nodejs. Value of : DB adminuser is " + adminuser);
-    // var adminpassword = DB_INFO_JSON.adminpassword;
-    // console.log("Access the env variable in nodejs. Value of : DB adminpassword is " + adminpassword);
-
     var oracledb = require('oracledb');
     oracledb.getConnection({
-            user: "SYS",
-            password: "welcome1",
-            connectString: "localhost:1521/XE"
+            user: adminuser,
+            password: adminpassword,
+            connectString: connectstring
         },
         function(err, connection) {
             if (err) {
@@ -35,52 +28,41 @@ exports.list = function(req, res) {
                 resultData = {
                     "MESSAGE": "ERROR connecting to DB-" + err
                 };
+                res.send(JSON.stringify(resultData));
             } else {
                 console.log("Connected to DB");
-                connection.execute("select * from scores;",
+                connection.execute("select * from scores",
                     function(err, result) {
                         if (err) {
                             console.log("DB communication error : " + err);
                             resultData = {
                                 "MESSAGE": "ERROR communicating with DB-" + err
                             };
+                            res.send(JSON.stringify(resultData));
                         } else {
                             console.log(result.rows);
                             resultData = result.rows;
+                            res.send(JSON.stringify(resultData));
                         }
                     });
             }
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(resultData));
+
+
         });
     // End of db code block
-
 };
 
 
 exports.create = function(req, res) {
     console.log("Entering create all scores function V2");
     console.log(req.body);
-
+    res.setHeader('Content-Type', 'application/json');
     // Start of db code block
-    console.log("Access the env variable in nodejs. Value of : process.env" + process.env);
-    // var DB_INFO = process.env.DB_INFO;
-    // console.log("Access the env variable in nodejs. Value of : process.env.DB_INFO is " + DB_INFO);
-
-    // var DB_INFO_JSON = JSON.parse(DB_INFO);
-    // console.log("Access the env variable in nodejs. Value of : DB_INFO_JSON is " + DB_INFO_JSON);
-    // var host = DB_INFO_JSON.host;
-    // console.log("Access the env variable in nodejs. Value of : DB host is " + host);
-    // var adminuser = DB_INFO_JSON.adminuser;
-    // console.log("Access the env variable in nodejs. Value of : DB adminuser is " + adminuser);
-    // var adminpassword = DB_INFO_JSON.adminpassword;
-    // console.log("Access the env variable in nodejs. Value of : DB adminpassword is " + adminpassword);
-
     var oracledb = require('oracledb');
     oracledb.getConnection({
-            user: "user",
-            password: "adminpassword",
-            connectString: "localhost/XE"
+            user: adminuser,
+            password: adminpassword,
+            connectString: connectstring
         },
         function(err, connection) {
             if (err) {
@@ -88,25 +70,28 @@ exports.create = function(req, res) {
                 resultData = {
                     "MESSAGE": "ERROR connecting to DB-" + err
                 };
+                res.send(JSON.stringify(resultData));
             } else {
                 console.log("Connected to DB");
-                connection.execute("CREATE TABLE scores (firstname VARCHAR2(30),lastname VARCHAR2(30),ssn VARCHAR2(30),dateofbirth VARCHAR2(30), score VARCHAR2(30);)",
+                connection.execute("CREATE TABLE scores(firstname VARCHAR2(30),lastname VARCHAR2(30),ssn VARCHAR2(30),dateofbirth VARCHAR2(30),score VARCHAR2(30))",
                     function(err, result) {
                         if (err) {
                             console.log("DB create table error : " + err);
                             resultData = {
                                 "MESSAGE": "ERROR creating a table in DB-" + err
                             };
+                            res.send(JSON.stringify(resultData));
                         } else {
                             console.log(result.rows);
                             resultData = {
                                 "MESSAGE": "SUCCESS created a table in DB"
                             };
+                            res.send(JSON.stringify(resultData));
                         }
                     });
             }
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(resultData));
+
+
         });
     // End of db code block
 
@@ -121,19 +106,7 @@ var util = require('util');
  */
 
 exports.score = function(req, res) {
-	// Start of db code block
-    console.log("Access the env variable in nodejs. Value of : process.env" + process.env);
-    // var DB_INFO = process.env.DB_INFO;
-    // console.log("Access the env variable in nodejs. Value of : process.env.DB_INFO is " + DB_INFO);
-
-    // var DB_INFO_JSON = JSON.parse(DB_INFO);
-    // console.log("Access the env variable in nodejs. Value of : DB_INFO_JSON is " + DB_INFO_JSON);
-    // var host = DB_INFO_JSON.host;
-    // console.log("Access the env variable in nodejs. Value of : DB host is " + host);
-    // var adminuser = DB_INFO_JSON.adminuser;
-    // console.log("Access the env variable in nodejs. Value of : DB adminuser is " + adminuser);
-    // var adminpassword = DB_INFO_JSON.adminpassword;
-    // console.log("Access the env variable in nodejs. Value of : DB adminpassword is " + adminpassword);
+    res.setHeader('Content-Type', 'application/json');
     if (req.is('application/json')) {
         console.log("JSON");
         console.log(req.body);
@@ -155,15 +128,15 @@ exports.score = function(req, res) {
     score = score % SCORE_MAX;
 
     while (score < SCORE_MIN) {
-		
+
         score = score + 100;
     }
 
     var oracledb = require('oracledb');
     oracledb.getConnection({
-            user: "user",
-            password: "adminpassword",
-            connectString: "localhost/XE"
+            user: adminuser,
+            password: adminpassword,
+            connectString: connectstring
         },
         function(err, connection) {
             if (err) {
@@ -171,14 +144,17 @@ exports.score = function(req, res) {
                 resultData = {
                     "MESSAGE": "ERROR connecting to DB-" + err
                 };
+                res.send(JSON.stringify(resultData));
             } else {
                 console.log("Connected to DB");
+                console.log("insert into scores values('" + firstname + "','" + lastname + "','" + ssn + "','" + dateofbirth + "','" + score + "')")
                 connection.execute("insert into scores values('" + firstname + "','" + lastname + "','" + ssn + "','" + dateofbirth + "','" + score + "')", function(err, result) {
                     if (err) {
                         console.log("DB insert error : " + err);
                         resultData = {
                             "MESSAGE": "ERROR inserting to DB-" + err
                         };
+                        res.send(JSON.stringify(resultData));
                     } else {
                         console.log(result.rows);
                         resultData = {
@@ -188,12 +164,10 @@ exports.score = function(req, res) {
                             "dateofbirth": dateofbirth,
                             "score": score
                         };
+                        res.send(JSON.stringify(resultData));
                     }
                 });
             }
-            res.setHeader('Content-Type', 'application/json');
-            console.log(resultData);
-            res.send(JSON.stringify(resultData));
         });
 
 };

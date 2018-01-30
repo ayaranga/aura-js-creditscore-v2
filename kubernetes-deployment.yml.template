@@ -18,7 +18,7 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: aura-js-creditscore-v2
+  name: aura-js-creditscore-v3
 spec:
   replicas: 1
   revisionHistoryLimit: 2
@@ -26,22 +26,30 @@ spec:
     metadata:
       labels:
         app: aura-js-creditscore
-        version: v2
+        version: v3
     spec:
       containers:
       - name: aura-js-creditscore
-#
-# _CHANGE_Part_3_Service_Broker_Integration_ : Uncomment the following env block to test service broker integration
-#
-#        env:
-#        - name: DB_INFO
-#          valueFrom:
-#            secretKeyRef:
-#              name: secret-mysql-sb-inst-1
-#              key: connection.json
-#
-        image: wcr.io/$WERCKER_APPLICATION_OWNER_NAME/$WERCKER_APPLICATION_NAME:$WERCKER_GIT_BRANCH-$WERCKER_GIT_COMMIT
-        imagePullPolicy: IfNotPresent
+
+#_CHANGE_Part_3_Service_Broker_Integration_ : Uncomment the following env block to test service broker integration
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: secret-ashapdb23
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret-ashapdb23
+              key: password
+        - name: DB_CONNECT_STRING
+          valueFrom:
+            secretKeyRef:
+              name: secret-ashapdb23
+              key: connect_string
+        image: docker.io/ashayr/aura-js-creditscore-emcc:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
       imagePullSecrets:
