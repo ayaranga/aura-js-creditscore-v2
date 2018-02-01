@@ -36,24 +36,22 @@ spec:
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: secret-ashapdb23
+              name: secret-ashatestpdb23
               key: username
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: secret-ashapdb23
+              name: secret-ashatestpdb23
               key: password
         - name: DB_CONNECT_STRING
           valueFrom:
             secretKeyRef:
-              name: secret-ashapdb23
+              name: secret-ashatestpdb23
               key: connect_string
         image: docker.io/ashayr/aura-js-creditscore-emcc:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
-      imagePullSecrets:
-      - name: wrelease
 ---
 ###########################################################################
 # Ingress resource
