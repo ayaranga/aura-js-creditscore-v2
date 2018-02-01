@@ -8,8 +8,6 @@ RUN apt-get update \
  && apt-get install -y libaio1 \
  && apt-get install -y build-essential \
  && apt-get install -y unzip \
- && apt-get install -y iptables \
- && apt-get install -y net-tools \
  && apt-get install -y curl
 
 #ADD ORACLE INSTANT CLIENT
@@ -31,9 +29,7 @@ ENV OCI_VERSION=12
 RUN rm instantclient-basic-linux.x64-12.2.0.1.0.zip
 Run rm instantclient-sdk-linux.x64-12.2.0.1.0.zip
 
-# Install node-oracledb module
-RUN npm install -g oracledb ejs express
-
+# Install the required modules
 ADD package.json /tmp/package.json
 RUN cd /tmp && npm install
 RUN mkdir /nodeapp && cp -a /tmp/node_modules /nodeapp

@@ -45,6 +45,7 @@ exports.list = function(req, res) {
                             res.send(JSON.stringify(resultData));
                         }
                     });
+                connection.close()
             }
 
 
@@ -89,6 +90,8 @@ exports.create = function(req, res) {
                             res.send(JSON.stringify(resultData));
                         }
                     });
+				connection.commit()
+                connection.close()
             }
 
 
@@ -167,6 +170,8 @@ exports.score = function(req, res) {
                         res.send(JSON.stringify(resultData));
                     }
                 });
+                connection.commit()
+                connection.close()
             }
         });
 
