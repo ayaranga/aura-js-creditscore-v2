@@ -19,6 +19,8 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: aura-js-creditscore-v3
+  annotations:
+    "sidecar.istio.io/inject": "false"
 spec:
   replicas: 1
   revisionHistoryLimit: 2

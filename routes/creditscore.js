@@ -11,6 +11,9 @@ var adminuser = process.env.DB_USER;
 console.log("Access the env variable in nodejs. Value of : DB adminuser is " + adminuser);
 var adminpassword = process.env.DB_PASSWORD;
 console.log("Access the env variable in nodejs. Value of : DB adminpassword is " + adminpassword);
+var tablespacename = process.env.DB_TABLESPACE;
+console.log("Access the env variable in nodejs. Value of : DB tablespace is " + tablespacename);
+
 exports.list = function(req, res) {
     console.log("Entering list all scores function V2");
     console.log(req.body);
@@ -41,11 +44,20 @@ exports.list = function(req, res) {
                             res.send(JSON.stringify(resultData));
                         } else {
                             console.log(result.rows);
-                            resultData = result.rows;
-                            res.send(JSON.stringify(resultData));
+                            var reo ='<html><head><title>Credit Score List</title></head><body><h1>Credit Score List</h1>{${table}}</body></html>';
+                            var table =''; //to store html table
+                            console.log("No. of rows: " + result.rows.length)
+                            for(var i=0; i<result.rows.length; i++){
+                                console.log("row: " + i)
+                                table +='<tr><td>'+ (i+1) +'</td><td>'+ result.rows[i][0] +'</td><td>'+ result.rows[i][1] +'</td><td>' + result.rows[i][3] +'</td><td>' + result.rows[i][2] +'</td><td>' + result.rows[i][4] +'</td></tr>';
+                            }
+                            table ='<table border="1"><tr><th>#</th><th>FirstName</th><th>LastName</th><th>DateOfBirth</th><th>SSN</th><th>Score</th></tr>'+ table +'</table>';
+                            reo = reo.replace('{${table}}', table);
+                            res.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
+                            res.write(reo, 'utf-8');
+                            res.end();
                         }
                     });
-                connection.close()
             }
 
 
@@ -74,7 +86,14 @@ exports.create = function(req, res) {
                 res.send(JSON.stringify(resultData));
             } else {
                 console.log("Connected to DB");
-                connection.execute("CREATE TABLE scores(firstname VARCHAR2(30),lastname VARCHAR2(30),ssn VARCHAR2(30),dateofbirth VARCHAR2(30),score VARCHAR2(30))",
+                var createstmt;
+                if (tablespacename.length == 0) {
+                    createstmt = "CREATE TABLE scores(firstname VARCHAR2(30),lastname VARCHAR2(30),ssn VARCHAR2(30),dateofbirth VARCHAR2(30),score VARCHAR2(30))";
+                } else {
+                    createstmt = "CREATE TABLE scores(firstname VARCHAR2(30),lastname VARCHAR2(30),ssn VARCHAR2(30),dateofbirth VARCHAR2(30),score VARCHAR2(30)) tablespace \"" + tablespacename + "\"";
+                }
+                console.log("db create statement " + createstmt);
+                connection.execute(createstmt,
                     function(err, result) {
                         if (err) {
                             console.log("DB create table error : " + err);
@@ -90,8 +109,7 @@ exports.create = function(req, res) {
                             res.send(JSON.stringify(resultData));
                         }
                     });
-				connection.commit()
-                connection.close()
+	        connection.commit()
             }
 
 
@@ -171,7 +189,6 @@ exports.score = function(req, res) {
                     }
                 });
                 connection.commit()
-                connection.close()
             }
         });
 
