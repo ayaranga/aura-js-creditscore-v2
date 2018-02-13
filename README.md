@@ -5,7 +5,7 @@ Clone this repo
 ```
 git clone https://github.com/ayaranga/aura-js-creditscore-v2
 ```
-Change directory to the repo 
+Change directory to the repo
 ```
 cd aura-js-creditscore-v2
 ```
@@ -26,7 +26,7 @@ If you are using aura EMCC broker, you can create the Oracle database instance a
 oms create serviceinstance ashatestpdb23 --serviceclass oracle-pdbaas --parameters "name:ashatestpdb45,zone:767B9903A9480442CE4838E7AEB38B88,emcc.servicetemplate.parameters.workload_name:SAI_MEDIUM_WORKLOAD,emcc.servicetemplate.parameters.pdb_name:ashatestpdb46,emcc.servicetemplate.parameters.service_name:ashatestpdb47,emcc.servicetemplate.parameters.target_name:ahuprod,emcc.servicetemplate.parameters.username:foo,emcc.servicetemplate.parameters.password:bar,emcc.servicetemplate.parameters.tablespaces:ashatesttbs"
 ```
 The above command creates a secret `secret-ashatestpdb23` that contains the credentials to connect to the database.
-NOTE: The PDB database created by the above command will have an unlimited quota for the tablespace specified for the specified PDB user. The default tablespace associated with the PDB user is "SYSTEM" but it has "0" bytes quota to the PDB user. When you are creating a table, it is required to specify the tablespace name that is used while creating the database so that the data can be inserted into the table successfully. 
+NOTE: The PDB database created by the above command will have an unlimited quota for the tablespace specified for the specified PDB user. The default tablespace associated with the PDB user is "SYSTEM" but it has "0" bytes quota to the PDB user. When you are creating a table, it is required to specify the tablespace name that is used while creating the database so that the data can be inserted into the table successfully.
 
 If the database instance is already running somewhere else, you can create a secret using secret.yaml available as part of this repo. Review and make necessary modifications to the secret file contents before creating.
 ```
@@ -34,14 +34,18 @@ If the database instance is already running somewhere else, you can create a sec
 ```
 Note: See https://kubernetes.io/docs/concepts/configuration/secret/ for details on creating and decoding secrets.
 ### Deploy the sample app
-In our current setup, when istio sidecar is installed for the sample app either manually or automatically (See https://istio.io/docs/setup/kubernetes/sidecar-injection.html for more details on installing istio sidecar), the sample app is not able to connect to the database. The error seen is “ORA-12547: TNS: lost contact”. We are trying to figure out a resolution for this. If  you face the same issue, you can disable sidecar injection using the annotation "sidecar.istio.io/inject" set to "false" in the deployment file. You can find the sample deployment file `kubernetes-deployment.yml.template.disable.sidecar.inject` in this repo. Otherwise you can use `kubernetes-deployment.yml.template` deployment file which does not disable the sidecar injection.  
-Edit the deployment file to specify the correct image name, tablespace name and the secret details required to connect to the Oracle database.
+The deployment template file `kubernetes-deployment.yml.template` is available as part of this repo.
+Edit the deployment file to specify the correct image name, /etc/hosts entries if any using hostAliases, tablespace name and the secret details required to connect to the Oracle database.
+
+If the database is deployed outside the cluster and istio sidecar is being installed, use --includeIPRanges option for not redirecting outbound database traffic to istio proxy. See https://istio.io/docs/tasks/traffic-management/egress.html for more details.  
+```
+kubectl apply -f <(istioctl kube-inject -f kubernetes-deployment.yml.template --includeIPRanges=10.0.0.1/24))
+```
+NOTE: --includeIPRanges option accepts comma separated list of IP ranges in CIDR form. If set, it redirects outbound traffic to Envoy only for IP ranges. Otherwise all outbound traffic is redirected.
+
+You can disable sidecar injection using the annotation "sidecar.istio.io/inject" set to "false" in the deployment file. You can find the sample deployment file  `kubernetes-deployment.yml.template.disable.sidecar.inject` to do this in this repo.
 ```
 kubectl apply -f kubernetes-deployment.yml.template.disable.sidecar.inject
-```
-To enable sidecar injection,
-```
-kubectl apply -f <(istioctl kube-inject -f kubernetes-deployment.yml.template)
 ```
 #### Delete the sample app deployment
 To delete the deployed sample app:
@@ -67,7 +71,7 @@ docker run -p 3000:3000 -it -e DB_CONNECT_STRING="(DESCRIPTION=(ADDRESS_LIST=(AD
 ```
 ## Running application locally on any machine
 1. Install nodejs on your machine. See https://nodejs.org/en/download/ for more details.
-2. Install Oracle database instant client. See https://docs.oracle.com/cd/E83411_01/OREAD/installing-oracle-database-instant-client.htm#OREAD348 for more details.  
+2. Install Oracle database instant client. See https://docs.oracle.com/cd/E83411_01/OREAD/installing-oracle-database-instant-client.htm#OREAD348 for more details.
 3. Clone this repo (git clone https://github.com/ayaranga/aura-js-creditscore-v2) and cd to the repo (cd aura-js-creditscore-v2)
 4. Run `npm install`
 5. Export the following env variables

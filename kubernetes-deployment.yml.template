@@ -28,6 +28,10 @@ spec:
         app: aura-js-creditscore
         version: v3
     spec:
+      hostAliases:
+      - ip: "129.146.73.156"
+        hostnames:
+        - "em12c.sainath.com"
       containers:
       - name: aura-js-creditscore
 
