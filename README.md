@@ -1,4 +1,9 @@
+docker build -t ashayr/aura-js-creditscore-mongo:latest .
+docker push ashayr/aura-js-creditscore-mongo:latest
+Edit kubernetes-deployment.yml.template to specify correct image and secret details.
+kubectl apply -f <(istioctl kube-inject -f kubernetes-deployment.yml.template)
 
+Access http://127.0.0.1:8001/api/v1/namespaces/default/services/aura-js-creditscore-mongo:http/proxy/api/creditscore
 
 # Sample Microservices App - Aura JS Credit Score
 

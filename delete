@@ -1,0 +1,5 @@
+kubectl delete deployment aura-js-creditscore-v2-mongo
+kubectl delete service aura-js-creditscore-mongo
+kubectl delete ing aura-js-creditscore-mongo
+
+
