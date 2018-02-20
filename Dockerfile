@@ -39,4 +39,4 @@ RUN rm -rf /nodeapp/oracle/linux
 ENV http_proxy ""
 ENV https_proxy ""
 EXPOSE 3000
-ENTRYPOINT  [ "/bin/sh", "-c" , "echo 129.146.73.156  em12c.sainath.com >> /etc/hosts && node /nodeapp/app.js" ]
+ENTRYPOINT  [ "/bin/sh", "-c" , "echo 129.146.84.157  emccdbaas.emccsbnet.emccsb.oraclevcn.com >> /etc/hosts && node /nodeapp/app.js" ]

@@ -30,27 +30,31 @@ spec:
         app: aura-js-creditscore
         version: v3
     spec:
+      hostAliases:
+      - ip: "129.146.84.157"
+        hostnames:
+        - "emccdbaas.emccsbnet.emccsb.oraclevcn.com"
       containers:
       - name: aura-js-creditscore
 
 #_CHANGE_Part_3_Service_Broker_Integration_ : Uncomment the following env block to test service broker integration
         env:
         - name: DB_TABLESPACE
-          value: "ashatesttbs"
+          value: "ashademotbs"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: secret-ashatestpdb23
+              name: secret-ashademopdb
               key: username
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: secret-ashatestpdb23
+              name: secret-ashademopdb
               key: password
         - name: DB_CONNECT_STRING
           valueFrom:
             secretKeyRef:
-              name: secret-ashatestpdb23
+              name: secret-ashademopdb
               key: connect_string
         image: docker.io/ashayr/aura-js-creditscore-emcc:latest
         imagePullPolicy: Always

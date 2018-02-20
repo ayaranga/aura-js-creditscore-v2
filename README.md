@@ -23,9 +23,10 @@ docker push ashayr/aura-js-creditscore-emcc
 ### Deploy database instance
 If you are using aura EMCC broker, you can create the Oracle database instance as follows:
 ```
-oms create serviceinstance ashatestpdb23 --serviceclass oracle-pdbaas --parameters "name:ashatestpdb45,zone:767B9903A9480442CE4838E7AEB38B88,emcc.servicetemplate.parameters.workload_name:SAI_MEDIUM_WORKLOAD,emcc.servicetemplate.parameters.pdb_name:ashatestpdb46,emcc.servicetemplate.parameters.service_name:ashatestpdb47,emcc.servicetemplate.parameters.target_name:ahuprod,emcc.servicetemplate.parameters.username:foo,emcc.servicetemplate.parameters.password:bar,emcc.servicetemplate.parameters.tablespaces:ashatesttbs"
+oms create serviceinstance ashademopdb --serviceclass oracle-pdbaas --parameters "name:ashademopdb1,zone:224C4518E3CBB69E84F5336FF5C2D53B,emcc.servicetemplate.parameters.workload_name:SAI_MEDIUM_WORKLOAD,emcc.servicetemplate.parameters.pdb_name:ashademopdb2,emcc.servicetemplate.parameters.service_name:ashademopdb3,emcc.servicetemplate.parameters.target_name:demo,emcc.servicetemplate.parameters.username:foo,emcc.servicetemplate.parameters.password:bar,emcc.servicetemplate.parameters.tablespaces:ashademotbs"
 ```
-The above command creates a secret `secret-ashatestpdb23` that contains the credentials to connect to the database.
+The above command creates a secret `secret-ashademopdb` that contains the credentials to connect to the database.
+
 NOTE: The PDB database created by the above command will have an unlimited quota for the tablespace specified for the specified PDB user. The default tablespace associated with the PDB user is "SYSTEM" but it has "0" bytes quota to the PDB user. When you are creating a table, it is required to specify the tablespace name that is used while creating the database so that the data can be inserted into the table successfully.
 
 If the database instance is already running somewhere else, you can create a secret using secret.yaml available as part of this repo. Review and make necessary modifications to the secret file contents before creating.
@@ -39,7 +40,7 @@ Edit the deployment file to specify the correct image name, /etc/hosts entries i
 
 If the database is deployed outside the cluster and istio sidecar is being installed, use --includeIPRanges option for not redirecting outbound database traffic to istio proxy. See https://istio.io/docs/tasks/traffic-management/egress.html for more details.  
 ```
-kubectl apply -f <(istioctl kube-inject -f kubernetes-deployment.yml.template --includeIPRanges=10.0.0.1/24))
+kubectl apply -f <(istioctl kube-inject -f kubernetes-deployment.yml.template --includeIPRanges=10.0.0.1/24)
 ```
 NOTE: --includeIPRanges option accepts comma separated list of IP ranges in CIDR form. If set, it redirects outbound traffic to Envoy only for IP ranges. Otherwise all outbound traffic is redirected.
 
@@ -63,6 +64,8 @@ curl -X POST http://<ip:port>/api/creditscore/create -i
 Enter the details and click Score button
 3. Verify the inserted data contents by accessing:
 http://<ip:port>/api/creditscore
+
+If you have not created the table, you see the message `{"MESSAGE":"ERROR communicating with DB-Error: ORA-00942: table or view does not exist"}`. If so, create the table as specified above in the step 1.
 
 NOTE: If you are running kubectl proxy, you can access the application using proxy url as well. Example: http://localhost:8001/api/v1/namespaces/default/services/aura-js-creditscore:http/proxy/api/creditscore
 ## Running sample application as a docker container
