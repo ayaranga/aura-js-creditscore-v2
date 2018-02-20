@@ -27,7 +27,9 @@ oms create serviceinstance ashademopdb --serviceclass oracle-pdbaas --parameters
 ```
 The above command creates a secret `secret-ashademopdb` that contains the credentials to connect to the database.
 
-NOTE: The PDB database created by the above command will have an unlimited quota for the tablespace specified for the specified PDB user. The default tablespace associated with the PDB user is "SYSTEM" but it has "0" bytes quota to the PDB user. When you are creating a table, it is required to specify the tablespace name that is used while creating the database so that the data can be inserted into the table successfully.
+NOTE:
+1. The above command sometimes reports "Post https://129.146.18.126:443/api/v1/namespaces/default/services/aura-admin-service:admin-service/proxy//v1/services/instances: unexpected EOF; some request body already written". This is a known timeout issue. Wait for few minutes and check if the secret is created successfully.
+2. The PDB database created by the above command will have an unlimited quota for the tablespace specified for the specified PDB user. The default tablespace associated with the PDB user is "SYSTEM" but it has "0" bytes quota to the PDB user. When you are creating a table, it is required to specify the tablespace name that is used while creating the database so that the data can be inserted into the table successfully.
 
 If the database instance is already running somewhere else, you can create a secret using secret.yaml available as part of this repo. Review and make necessary modifications to the secret file contents before creating.
 ```
@@ -38,7 +40,7 @@ Note: See https://kubernetes.io/docs/concepts/configuration/secret/ for details 
 The deployment template file `kubernetes-deployment.yml.template` is available as part of this repo.
 Edit the deployment file to specify the correct image name, /etc/hosts entries if any using hostAliases, tablespace name and the secret details required to connect to the Oracle database.
 
-If the database is deployed outside the cluster and istio sidecar is being installed, use --includeIPRanges option for not redirecting outbound database traffic to istio proxy. See https://istio.io/docs/tasks/traffic-management/egress.html for more details.  
+If the database is deployed outside the cluster and istio sidecar is being installed, use --includeIPRanges option for not redirecting outbound database traffic to istio proxy. See https://istio.io/docs/tasks/traffic-management/egress.html for more details.
 ```
 kubectl apply -f <(istioctl kube-inject -f kubernetes-deployment.yml.template --includeIPRanges=10.0.0.1/24)
 ```
@@ -70,7 +72,7 @@ If you have not created the table, you see the message `{"MESSAGE":"ERROR commun
 NOTE: If you are running kubectl proxy, you can access the application using proxy url as well. Example: http://localhost:8001/api/v1/namespaces/default/services/aura-js-creditscore:http/proxy/api/creditscore
 ## Running sample application as a docker container
 ```
-docker run -p 3000:3000 -it -e DB_CONNECT_STRING="(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=129.146.73.156)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=ashatestpdb47)(INSTANCE_NAME=ahuprod)(UR=A)(SERVER=DEDICATED)))" -e DB_USER=foo -e DB_PASSWORD=bar -e DB_TABLESPACE=ashatesttbs ashayr/aura-js-creditscore-emcc:latest
+docker run -p 3000:3000 -it -e DB_CONNECT_STRING="(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=emccdbaas.emccsbnet.emccsb.oraclevcn.com)(PORT=2521)))(CONNECT_DATA=(SERVICE_NAME=ashademopdb3)(INSTANCE_NAME=demo)(UR=A)(SERVER=DEDICATED)))" -e DB_USER=foo -e DB_PASSWORD=bar -e DB_TABLESPACE=ashademotbs ashayr/aura-js-creditscore-emcc:latest
 ```
 ## Running application locally on any machine
 1. Install nodejs on your machine. See https://nodejs.org/en/download/ for more details.
@@ -81,8 +83,8 @@ docker run -p 3000:3000 -it -e DB_CONNECT_STRING="(DESCRIPTION=(ADDRESS_LIST=(AD
 ```
 export DB_USER=foo
 export DB_PASSWORD=bar
-export DB_CONNECT_STRING=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=129.146.73.156)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=ashatestpdb47)(INSTANCE_NAME=ahuprod)(UR=A)(SERVER=DEDICATED)))
-export DB_TABLESPACE=ashatesttbs
+export DB_CONNECT_STRING=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=emccdbaas.emccsbnet.emccsb.oraclevcn.com)(PORT=2521)))(CONNECT_DATA=(SERVICE_NAME=ashademopdb3)(INSTANCE_NAME=demo)(UR=A)(SERVER=DEDICATED)))
+export DB_TABLESPACE=ashademotbs
 ```
 5. Run `node app.js`
 
