@@ -29,7 +29,7 @@ The above command creates a secret `secret-ashademopdb` that contains the creden
 
 NOTE:
 1. The above command sometimes reports "Post https://129.146.18.126:443/api/v1/namespaces/default/services/aura-admin-service:admin-service/proxy//v1/services/instances: unexpected EOF; some request body already written". This is a known timeout issue. Wait for few minutes and check if the secret is created successfully.
-2. The PDB database created by the above command will have an unlimited quota for the tablespace specified for the specified PDB user. The default tablespace associated with the PDB user is "SYSTEM" but it has "0" bytes quota to the PDB user. When you are creating a table, it is required to specify the tablespace name that is used while creating the database so that the data can be inserted into the table successfully.
+2. The PDB database created by the above command will have an unlimited quota for the tablespace specified for the specified PDB user. If you do not specify any tablespace name while creating the PDB, it defaults to "pdb_tbs1". When you are creating a table, it is required to specify the tablespace name so that the data can be inserted into the table successfully. If you do not specify any tablespace name while creating a table, the default tablespace "SYSTEM" is considered but it has "0" bytes quota to the PDB user.
 
 If the database instance is already running somewhere else, you can create a secret using secret.yaml available as part of this repo. Review and make necessary modifications to the secret file contents before creating.
 ```
