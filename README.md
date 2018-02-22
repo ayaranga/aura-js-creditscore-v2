@@ -38,7 +38,7 @@ If the database instance is already running somewhere else, you can create a sec
 Note: See https://kubernetes.io/docs/concepts/configuration/secret/ for details on creating and decoding secrets.
 ### Deploy the sample app
 The deployment template file `kubernetes-deployment.yml.template` is available as part of this repo.
-Edit the deployment file to specify the correct image name, /etc/hosts entries if any using hostAliases, tablespace name and the secret details required to connect to the Oracle database.
+Edit the deployment file to specify the correct image name, /etc/hosts entries if any using hostAliases, tablespace name and the secret details required to connect to the Oracle database. Note that if you have not specified explicitly any tablespace name while creating the PDB, use "pdb_tbs1" as the tablespace name in the deployment file.
 
 If the database is deployed outside the cluster and istio sidecar is being installed, use --includeIPRanges option for not redirecting outbound database traffic to istio proxy. See https://istio.io/docs/tasks/traffic-management/egress.html for more details.
 ```
